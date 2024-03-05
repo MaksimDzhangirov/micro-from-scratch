@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  frontend-vue:
+    build:
+      context: ./frontend/app-vue
+      target: build-stage
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./frontend/app-vue:/app
+    command:
+      npm run dev
+    networks:
+      hyrix_net:
+        aliases:
+          - frontend.vue.local
+  cypress-e2e:
+    image: cypress/base:12
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./frontend/app-vue:/app
+    command:
+      bash -c "cd /app"
+      #  && npm ci && npm run test:e2e:ci
+    networks:
+      hyrix_net:
+        aliases:
+          - frontend.cypress.local
+  frontend-angular:
+    build:
+      context: ./frontend/app-angular
+      target: build-stage
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend/app-angular:/app
+    command:
+      npm start
+    networks:
+      hyrix_net:
+        aliases:
+          - frontend.angular.local
+networks:
+  hyrix_net:
